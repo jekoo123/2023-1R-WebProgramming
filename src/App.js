@@ -1,25 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react'
+import './App.css'
 
-function App() {
+const App = () => {  
+  const [row, setRow] = useState([]);
+  const load = () =>{
+    if( row.length === 0 ) {
+      fetch("http://openapi.seoul.go.kr:8088/4a50707a6d726b6439344c6e4d5552/json/RealtimeCityAir/1/25/").then(
+        function(res2) {
+          res2.json().then(function(res3) {
+            setRow(res3.RealtimeCityAir.row);
+          })
+        }
+      )
+    }
+    else{
+      setRow([]);
+    }
+  }
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+      <button className="load_button" onClick={load}>
+        load
+      </button>
+      <table>
+        <thead>
+          <th>이름</th>
+          <th>PM10</th>
+          <th>O3</th>
+          <th>상태</th>
+        </thead>
+        <tbody>
+          {
+          row.map(function(obj) {
+            return <tr>
+              <td>{obj.MSRSTE_NM}</td>
+              <td>{obj.PM10}</td>
+              <td>{obj.O3}</td>
+              <td>{obj.IDEX_NM}</td>
+              </tr>
+          })
+          }
+        </tbody>
+      </table>
+    </>
+  )
 }
-
 export default App;
